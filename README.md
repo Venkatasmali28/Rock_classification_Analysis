@@ -339,6 +339,5 @@ For issues, questions, or contributions, please refer to the project repository 
 
 ---
 
-**Repository**: Rock_classification_Analysis  
-**Owner**: Venkatasmali28  
+**Repository**: Rock_classification_Analysis    
 **Last Updated**: December 2025
