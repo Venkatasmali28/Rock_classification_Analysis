@@ -1,0 +1,29 @@
+import torch
+import torch.nn as nn
+from torchvision import models
+
+class_names = [
+    'Igneous_Basalt', 'Igneous_Granite',
+    'Metamorphic_Marble', 'Metamorphic_Quartzite',
+    'Sedimentary_Coal', 'Sedimentary_Limestone', 'Sedimentary_Sandstone'
+]
+
+# Threshold for classification confidence below which classify as 'Not a rock type'
+CONFIDENCE_THRESHOLD = 0.6
+
+def get_classifier_model(weights_path=r'C:\Users\PAVAN MANIKANTA\Downloads\MineSafety\backend\models\saved_models\rock_classifier.pth'):
+    model = models.resnet18(pretrained=False)
+    model.fc = nn.Linear(model.fc.in_features, len(class_names))
+    model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu')))
+    model.eval()
+    return model
+
+def classify_with_threshold(model, input_tensor):
+    with torch.no_grad():
+        out = model(input_tensor)
+        probs = torch.softmax(out, dim=1)
+        conf, pred = torch.max(probs, 1)
+        pred_class, confidence = pred.item(), conf.item()
+        if confidence < CONFIDENCE_THRESHOLD:
+            return None, confidence  # Not confident, treat as 'Not a rock type'
+        return pred_class, confidence
